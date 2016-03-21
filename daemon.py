@@ -92,33 +92,26 @@ class RabbitmqQueueManager:
                         except IOError:
                                 self.message_type = 'OCRERROR'
                                 txt='An error occured trying to read the file.'
-                                print("IOError ")
                         except ValueError:
                                 self.message_type = 'OCRERROR'
                                 txt='Non-numeric data found in the file.'
-                                print("ValueError ")
                         except ImportError:
                                 self.message_type = 'OCRERROR'
                                 txt="NO module found"
-                                print("ImportError ")
                         except EOFError:
                                 self.message_type = 'OCRERROR'
                                 txt='EOF on Python script?'
-                                print("EOFError ")
                         except KeyboardInterrupt:
                                 self.message_type = 'OCRERROR'
                                 txt='Operation Cancelled.'
-                                print("KeyboardInterrupt ")
                         except Exception as e:
                                 self.message_type = 'OCRERROR'
                                 txt = tesseractErrorMessage
                         except:
                                 self.message_type = 'OCRERROR'
                                 txt = tesseractErrorMessage
-                                print("Generic exception ")
                         return txt
 
-time.sleep(5)
 lig = RabbitmqQueueManager()
 channel = lig.ConnectChannel(lig.rabbitmq_hostname, lig.channel_out_queue)
 lig.startConsuming(lig.channel_in_queue, channel)
