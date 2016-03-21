@@ -41,7 +41,7 @@ class RabbitmqQueueManager:
                       type = message_type,
                       headers = message_headers,
                       ))
-                print "%r:%r: Published message - correlation_id ->  %r -> " % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[0:-3],self.system_hostname, message_correlation_id)
+               
         def startConsuming(self, channel_in_queue, channel):
                 channel.basic_qos(prefetch_count=1) # one message at a time
                 channel.basic_consume(self.callback,queue=self.channel_in_queue)
@@ -50,12 +50,9 @@ class RabbitmqQueueManager:
         def callback(self, ch, method, properties, body):
                 message_correlation_id = properties.correlation_id
                 self.system_time_start = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[0:-3]
-                print "%r:%r: Got correlation_id ->  %r" % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[0:-3],self.system_hostname, properties.correlation_id)
-                print "%r:%r: Try to convert ->  %r" % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[0:-3],self.system_hostname, properties.correlation_id)
                 ocr_result = self.bytesTotxt(body)
                 self.system_time_end = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[0:-3]
                 message_headers = {'origin ':lig.system_hostname, 'starttimestamp':lig.system_time_start, 'endtimestamp':lig.system_time_end }
-                print "%r:%r: Try to publish correlation_id %r with type %r" % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[0:-3],self.system_hostname, properties.correlation_id, self.message_type)
                 self.publishMessage(ocr_result, self.message_delivery_mode, self.message_app_id, self.message_content_type, message_correlation_id, self.message_timestamp,self.message_type,message_headers, lig.channel_out_queue, lig.rabbitmq_hostname, channel)
                 self.messageAck(ch, method)
 
