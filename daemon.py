@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/python
 import pika
 import time
 import datetime
